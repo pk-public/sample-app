@@ -209,25 +209,14 @@
                         <generate>
                             <javaTimeTypes>true</javaTimeTypes>
                         </generate>
+                        <target>
+                            <packageName>com.pk.sample.db</packageName>
+                        </target>
                         <database>
                             <name>org.jooq.meta.postgres.PostgresDatabase</name>
                             <includes>.*</includes>
-                            <inputSchema>master</inputSchema>
-                            <!--                            <forcedTypes>-->
-                            <!--                                <forcedType>-->
-                            <!--                                    <userType>java.time.Instant</userType>-->
-                            <!--                                    <converter><![CDATA[-->
-                            <!--                                        org.jooq.Converter.ofNullable(java.time.OffsetDateTime.class, java.time.Instant.class, o -> o.toInstant(), i -> i.atOffset(java.time.ZoneOffset.UTC))-->
-                            <!--                                     ]]>-->
-                            <!--                                    </converter>-->
-                            <!--                                    <types>(?i:TIMESTAMP\ WITH\ TIME\ ZONE)</types>-->
-                            <!--                                </forcedType>-->
-                            <!--                            </forcedTypes>-->
+                            <inputSchema>public</inputSchema>
                         </database>
-                        <target>
-                            <packageName>com.some.package.db.generated</packageName>
-                            <directory>${project.build.directory}/generated-sources</directory>
-                        </target>
                     </generator>
                     <logging>INFO</logging>
                 </configuration>
