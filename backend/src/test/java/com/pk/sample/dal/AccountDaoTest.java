@@ -1,0 +1,59 @@
+package com.pk.sample.dal;
+
+import com.pk.sample.model.Account;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+//@Retention(RetentionPolicy.RUNTIME)
+//@Target({ElementType.TYPE})
+//@Inherited
+@SpringBootTest
+@ActiveProfiles("test")
+@DirtiesContext
+@Transactional
+@Rollback
+//@Import(DbTest.DbTestConf.class)
+//@TestPropertySource(properties = {
+//        "spring.main.allow-bean-definition-overriding=true",
+//        "spring.liquibase.enabled=true",
+//        "spring.liquibase.change-log=classpath:/db/changelog/db.changelog-master.xml",
+//})
+//@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, statements = {
+//        "DELETE FROM MASTER.DUPA",
+//})
+class AccountDaoTest {
+
+    @Autowired
+    private AccountDao accountDao;
+
+    @Test
+    void test() {
+        // given
+        String name = randomAlphanumeric(7);
+        Account account = Account.newAccount(name);
+
+        // when
+        accountDao.saveAccount(account);
+        List<Account> accounts = accountDao.fetchAccounts();
+
+        // then
+        assertThat(accounts, hasSize(1));
+        Account expected = accounts.get(0);
+        assertEquals(name, account.getName());
+        assertThat(expected.getId(), notNullValue());
+        assertEquals(expected.getId(), account.getId());
+    }
+}
