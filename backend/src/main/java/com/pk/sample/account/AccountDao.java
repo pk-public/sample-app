@@ -1,4 +1,4 @@
-package com.pk.sample.dal;
+package com.pk.sample.account;
 
 import com.pk.sample.db.tables.records.AccountsRecord;
 import com.pk.sample.model.Account;

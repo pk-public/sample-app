@@ -3,20 +3,13 @@ This project consists of two main modules:
 - backend
 - frontend
 
-#Configuring dev env
-
-```shell script
-sudo -u postgres -i
-psql
-create user sampleapp with encrypted password 'sampleapp';
-create database sampleapp;
-grant ALL on DATABASE sampleapp to sampleapp ;
-```
-
 
 #Backend Module
 This module, build on top of spring-boot-web, is the server-side application, responsible for exposing data via REST API.
-Building this module, generates Database Layer Jooq code.
+
+Building this module, launches postgres docker image (testcontainer), which is then migrated and used for jooq code generator.
+
+Also, running tests on this module starts testcontainer postgres db
 
 The build process is as follows:
 1. port-allocator-maven-plugin allocates random port for build-time postgres instnace
@@ -31,8 +24,22 @@ This is Angular based frontend application, that handles web UI.
 For this project, postgreSQL was chosen.
 Database is managed b
 
-#ToDo
-- seperate development (build-time) database from runtime. Migrate it to in-memory DB such as  
+
+#Configuring dev env
+
+Sample dev env DB config.
+
+
+```shell script
+sudo -u postgres -i
+psql
+create user sampleapp with encrypted password 'sampleapp';
+create database sampleapp;
+grant ALL on DATABASE sampleapp to sampleapp ;
+```
+
+#ToDo 
 - migrate mvn -> gradle
 - introduce frontend tests
-- dockerize and automate dev env prepartion ( db )
+- dockerize and automate dev env ( e.g. db )
+- separate migrations from backend app ( preper for multi node ) 

@@ -1,4 +1,4 @@
-package com.pk.sample.dal;
+package com.pk.sample;
 
 
 import org.springframework.boot.jdbc.DataSourceBuilder;
