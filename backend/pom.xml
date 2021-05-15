@@ -11,7 +11,13 @@
 
     <artifactId>backend</artifactId>
 
-
+    <properties>
+        <db.name>sampleapp</db.name>
+        <jdbc.driver>org.postgresql.Driver</jdbc.driver>
+        <jdbc.username>sampleapp</jdbc.username>
+        <jdbc.password>sampleapp</jdbc.password>
+        <jdbc.url>jdbc:postgresql://localhost:${db.port}/${db.name}</jdbc.url>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -23,13 +29,17 @@
             <artifactId>spring-boot-starter-jersey</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jooq</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -47,10 +57,189 @@
             <artifactId>spring-restdocs-mockmvc</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+
+            <!--            allocate random port for postgres -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>port-allocator-maven-plugin</artifactId>
+                <version>${port-allocator.version}</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>allocate-ports</goal>
+                        </goals>
+                        <configuration>
+                            <ports>
+                                <port>
+                                    <name>db.port</name>
+                                </port>
+                            </ports>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--            create DB -->
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${docker-maven.version}</version>
+                <executions>
+                    <execution>
+                        <id>start-postgres</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stop-postgres</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <images>
+                        <image>
+                            <alias>postgres</alias>
+                            <name>postgres:11</name>
+                            <run>
+                                <ports>
+                                    <port>${db.port}:5432</port>
+                                </ports>
+                                <env>
+                                    <POSTGRES_USER>${jdbc.username}</POSTGRES_USER>
+                                    <POSTGRES_PASSWORD>${jdbc.password}</POSTGRES_PASSWORD>
+                                    <POSTGRES_DB>${db.name}</POSTGRES_DB>
+                                </env>
+                                <wait>
+                                    <log>database system is ready to accept connections</log>
+                                    <time>20000</time>
+                                </wait>
+                                <wait>
+                                    <time>3000</time>
+                                </wait>
+                            </run>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
+
+            <!--            migrate DB-->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <url>${jdbc.url}</url>
+                    <user>${jdbc.username}</user>
+                    <password>${jdbc.password}</password>
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                    </locations>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.2.20</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!--            generate JooQ -->
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <configuration>
+                    <jdbc>
+                        <driver>${jdbc.driver}</driver>
+                        <url>${jdbc.url}</url>
+                        <user>${jdbc.username}</user>
+                        <password>${jdbc.password}</password>
+                    </jdbc>
+                    <generator>
+                        <generate>
+                            <javaTimeTypes>true</javaTimeTypes>
+                        </generate>
+                        <database>
+                            <name>org.jooq.meta.postgres.PostgresDatabase</name>
+                            <includes>.*</includes>
+                            <inputSchema>master</inputSchema>
+                            <!--                            <forcedTypes>-->
+                            <!--                                <forcedType>-->
+                            <!--                                    <userType>java.time.Instant</userType>-->
+                            <!--                                    <converter><![CDATA[-->
+                            <!--                                        org.jooq.Converter.ofNullable(java.time.OffsetDateTime.class, java.time.Instant.class, o -> o.toInstant(), i -> i.atOffset(java.time.ZoneOffset.UTC))-->
+                            <!--                                     ]]>-->
+                            <!--                                    </converter>-->
+                            <!--                                    <types>(?i:TIMESTAMP\ WITH\ TIME\ ZONE)</types>-->
+                            <!--                                </forcedType>-->
+                            <!--                            </forcedTypes>-->
+                        </database>
+                        <target>
+                            <packageName>com.some.package.db.generated</packageName>
+                            <directory>${project.build.directory}/generated-sources</directory>
+                        </target>
+                    </generator>
+                    <logging>INFO</logging>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
 
             <plugin>
                 <groupId>org.asciidoctor</groupId>

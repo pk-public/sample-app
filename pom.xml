@@ -15,10 +15,16 @@
         <java.version>11</java.version>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.source>11</maven.compiler.source>
+
         <spring-boot.version>2.4.5</spring-boot.version>
         <spring-restdocs.version>2.0.5.RELEASE</spring-restdocs.version>
         <flyway.version>7.8.2</flyway.version>
+        <testcontainers.version>1.15.3</testcontainers.version>
         <asciidoctor.version>1.5.8</asciidoctor.version>
+
+        <testcontainers.version>1.12.0</testcontainers.version>
+        <port-allocator.version>1.2</port-allocator.version>
+        <docker-maven.version>0.35.0</docker-maven.version>
     </properties>
 
     <modules>
@@ -34,7 +40,40 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${testcontainers.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>30.1.1-jre</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.12.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>3.6.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>4.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>3.6.1</version>
+            </dependency>
         </dependencies>
+
     </dependencyManagement>
 
     <build>
@@ -43,15 +82,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
             </plugin>
+
+
         </plugins>
     </build>
 
