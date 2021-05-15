@@ -1,0 +1,34 @@
+<configuration debug="true" scan="false">
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder name="enc" class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <param name="Pattern"
+                       value="%highlight(%-5level) %red(%d{ISO8601}) %green(%thread) %blue(%logger{0}) %msg%n"/>
+            </layout>
+        </encoder>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/var/log/wash/current.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>/var/log/wash/%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>100MB</totalSizeCap>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+
+        <encoder name="enc" class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <param name="Pattern"
+                       value="%-5level %d{ISO8601} --- %thread %logger{0} --- %msg%n"/>
+            </layout>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="console"/>
+<!--        <appender-ref ref="file"/>-->
+    </root>
+</configuration>

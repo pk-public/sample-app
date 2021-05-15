@@ -40,7 +40,19 @@ class AccountDaoTest {
     private AccountDao accountDao;
 
     @Test
-    void test() {
+    void shouldUpdateAccountId() {
+        // given
+        Account account = Account.newAccount(randomAlphanumeric(7));
+
+        // when
+        accountDao.saveAccount(account);
+
+        // then
+        assertThat(account.getId(), notNullValue());
+    }
+
+    @Test
+    void shouldFetchStoredAccount() {
         // given
         String name = randomAlphanumeric(7);
         Account account = Account.newAccount(name);
