@@ -24,11 +24,11 @@ public class AccountDao {
     }
 
     public void saveAccount(Account account) {
-        Integer id = dsl.insertInto(ACCOUNTS)
+        Long id = dsl.insertInto(ACCOUNTS)
                 .set(ACCOUNTS.NAME, account.getName())
                 .returning(ACCOUNTS.ID)
                 .fetchOne().getId();
-        account.setId(id.longValue());
+        account.setId(id);
     }
 
 }

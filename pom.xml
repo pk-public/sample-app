@@ -25,6 +25,7 @@
         <testcontainers.version>1.12.0</testcontainers.version>
         <port-allocator.version>1.2</port-allocator.version>
         <docker-maven.version>0.35.0</docker-maven.version>
+        <maven-surefire.version>2.22.2</maven-surefire.version>
     </properties>
 
     <modules>

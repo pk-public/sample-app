@@ -17,23 +17,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//@Retention(RetentionPolicy.RUNTIME)
-//@Target({ElementType.TYPE})
-//@Inherited
-@SpringBootTest
-@ActiveProfiles("test")
-@DirtiesContext
-@Transactional
-@Rollback
-//@Import(DbTest.DbTestConf.class)
-//@TestPropertySource(properties = {
-//        "spring.main.allow-bean-definition-overriding=true",
-//        "spring.liquibase.enabled=true",
-//        "spring.liquibase.change-log=classpath:/db/changelog/db.changelog-master.xml",
-//})
-//@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, statements = {
-//        "DELETE FROM MASTER.DUPA",
-//})
+@DbTest
 class AccountDaoTest {
 
     @Autowired
