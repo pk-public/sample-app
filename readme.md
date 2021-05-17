@@ -1,6 +1,7 @@
 This project consists of two main modules:
 
 - backend
+- model
 - frontend
 
 
@@ -16,6 +17,12 @@ The build process is as follows:
 2. docker-maven-plugin builds and starts docker container with running postgres
 3. flyway-maven-plugin migrates postgres
 4. jooq-codegen-maven generates jooq classes
+
+#Model
+This module contains all buisness related model entities, not dependan
+
+This allows the business model to be technology-agnostic (e.g. db-agnostic).
+Also, those are ubiquitous definition defined in order for seperate modules to communicate. 
 
 #Frontend
 This is Angular based frontend application, that handles web UI.
@@ -43,3 +50,5 @@ grant ALL on DATABASE sampleapp to sampleapp ;
 - introduce frontend tests
 - dockerize and automate dev env ( e.g. db )
 - separate migrations from backend app ( preper for multi node ) 
+- configure jooq for automatic enum conversion
+- seperate criteria model from db layer
