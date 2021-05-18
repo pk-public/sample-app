@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -22,5 +23,21 @@ public class Transfer {
     private Currency currency;
     private String title;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transfer transfer = (Transfer) o;
+        return Objects.equals(id, transfer.id) &&
+                Objects.equals(sourceId, transfer.sourceId) &&
+                Objects.equals(destinationId, transfer.destinationId) &&
+                Objects.equals(amount.doubleValue(), transfer.amount.doubleValue()) &&
+                currency == transfer.currency &&
+                Objects.equals(title, transfer.title);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, sourceId, destinationId, amount.doubleValue(), currency, title);
+    }
 }

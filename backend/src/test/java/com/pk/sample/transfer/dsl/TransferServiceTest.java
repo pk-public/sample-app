@@ -1,73 +1,84 @@
 package com.pk.sample.transfer.dsl;
 
 import com.pk.sample.DbTest;
-import com.pk.sample.account.AccountService;
+import com.pk.sample.RandomEntityService;
+import com.pk.sample.model.Account;
 import com.pk.sample.model.Transfer;
 import com.pk.sample.model.criteria.Property;
 import com.pk.sample.model.criteria.TransferCriteria;
 import com.pk.sample.model.criteria.sentences.EqCondition;
 import com.pk.sample.transfer.TransferService;
-import org.jooq.DSLContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.testcontainers.shaded.org.apache.commons.lang.math.RandomUtils;
 
-import java.math.BigDecimal;
 import java.util.List;
 
-import static com.pk.sample.model.Account.newAccount;
-import static com.pk.sample.model.Currency.USD;
-import static com.pk.sample.model.Transfer.newTransfer;
-import static java.math.BigDecimal.TEN;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 @DbTest
 class TransferServiceTest {
 
     @Autowired
-    private DSLContext dsl;
-
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
     private TransferService transferService;
 
-    private Long frstAccountId;
-    private Long scodAccountId;
+    @Autowired
+    private RandomEntityService randomEntityService;
+
+    private Account frstAccount;
+    private Account scndAccount;
+
+    private Transfer seperateTransaction;
+    private List<Transfer> transactions;
 
     @BeforeEach
     void setUp() {
-        frstAccountId = generateAccount();
-        scodAccountId = generateAccount();
-        generateTransfers();
+        frstAccount = randomEntityService.createRandomAccount();
+        scndAccount = randomEntityService.createRandomAccount();
+        seperateTransaction = randomEntityService.createRandomTransaction(frstAccount, scndAccount);
+        transactions = randomEntityService.createRandomTransactions(7, scndAccount, frstAccount);
     }
 
     @Test
     void shouldFetchBySource() {
         List<Transfer> fetched = transferService.fetch(TransferCriteria.builder()
-                .condition(new EqCondition(Property.SOURCE_ID, frstAccountId))
+                .condition(new EqCondition(Property.SOURCE_ID, frstAccount.getId()))
                 .build());
 
         assertEquals(1, fetched.size());
+        assertEquals(fetched.get(0), seperateTransaction);
     }
 
     @Test
-    void shouldNotFetchBySource() {
+    void shouldFetchByDestination() {
         List<Transfer> fetched = transferService.fetch(TransferCriteria.builder()
-                .condition(new EqCondition(Property.SOURCE_ID, scodAccountId))
+                .condition(new EqCondition(Property.DESTINATION_ID, frstAccount.getId()))
+                .build());
+
+        assertEquals(transactions.size(), fetched.size());
+        assertThat(fetched, containsInAnyOrder(transactions.toArray()));
+    }
+
+    @Test
+    void shouldConcatanateConditions() {
+        List<Transfer> fetched = transferService.fetch(TransferCriteria.builder()
+                .condition(new EqCondition(Property.DESTINATION_ID, frstAccount.getId()))
+                .condition(new EqCondition(Property.SOURCE_ID, frstAccount.getId()))
                 .build());
 
         assertEquals(0, fetched.size());
     }
 
-    private void generateTransfers() {
-        transferService.save(newTransfer(frstAccountId, scodAccountId, TEN, USD, randomAlphabetic(7)));
+    @Test
+    void shouldNotFetchBySource() {
+        List<Transfer> fetched = transferService.fetch(TransferCriteria.builder()
+                .condition(new EqCondition(Property.SOURCE_ID, RandomUtils.nextLong()))
+                .build());
+
+        assertEquals(0, fetched.size());
     }
 
-    private Long generateAccount() {
-        return accountService.saveAccount(newAccount(randomAlphabetic(7), USD))
-                .getId();
-    }
 }
