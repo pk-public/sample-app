@@ -10,7 +10,7 @@ import lombok.Data;
 import java.util.Set;
 
 import static com.pk.sample.model.criteria.Property.*;
-import static com.pk.sample.utils.Consumers.nullableBigDecimal;
+import static com.pk.sample.utils.Utils.nullableBigDecimal;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.ObjectUtils.anyNotNull;
