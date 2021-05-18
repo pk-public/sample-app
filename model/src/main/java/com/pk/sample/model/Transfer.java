@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,13 +34,14 @@ public class Transfer {
         return Objects.equals(id, transfer.id) &&
                 Objects.equals(sourceId, transfer.sourceId) &&
                 Objects.equals(destinationId, transfer.destinationId) &&
-                Objects.equals(amount.doubleValue(), transfer.amount.doubleValue()) &&
+                isNull(amount) ? isNull(transfer.amount) : nonNull(transfer.amount) && amount.compareTo(transfer.amount) == 0 &&
                 currency == transfer.currency &&
                 Objects.equals(title, transfer.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, sourceId, destinationId, amount.doubleValue(), currency, title);
+        Double amountHash = amount == null ? null : amount.doubleValue();
+        return Objects.hash(id, sourceId, destinationId, amountHash, currency, title);
     }
 }
