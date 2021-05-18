@@ -17,7 +17,8 @@ import static org.mockito.Mockito.*;
 class TransferCriteriaTest {
 
     @Test
-    void shouldUpdateAccountId(@Mock ConditionVisitor mockedVisitor) {
+    void shouldVisit(@Mock ConditionVisitor mockedVisitor) {
+        // given
         TransferCriteria criteria = TransferCriteria.builder()
                 .condition(new LikeCondition(TITLE, "a"))
                 .condition(new EqCondition(SOURCE_ID, 1L))
@@ -33,6 +34,17 @@ class TransferCriteriaTest {
         verify(mockedVisitor).visitGreaterThenSentence(AMOUNT, ONE);
         verify(mockedVisitor).visitLessThenSentence(AMOUNT, TEN);
         verifyNoMoreInteractions(mockedVisitor);
+    }
+
+    @Test
+    void shouldIgnoreBrokenConditions(@Mock ConditionVisitor mockedVisitor) {
+        // given
+        doThrow(new RuntimeException())
+                .when(mockedVisitor)
+                .visitEqSentence(any(), any());
+
+        // when
+        shouldVisit(mockedVisitor);
     }
 
 
