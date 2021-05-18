@@ -39,3 +39,4 @@ grant ALL on DATABASE sampleapp to sampleapp ;
 - dockerize and automate dev env ( e.g. db )
 - separate migrations from backend app ( preper for multi node ) 
 - test all conditions
+- shared docker DB instance on mvn tests (and maybe even build ?)
