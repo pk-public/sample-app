@@ -14,7 +14,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import javax.sql.DataSource;
 import java.lang.annotation.*;
-import java.time.Duration;
+
+import static java.time.Duration.ofSeconds;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
@@ -51,7 +52,7 @@ public @interface DbTest {
                             .withDatabaseName(DATABASE_NAME)
                             .withUsername(USERNAME)
                             .withPassword(PASSWORD)
-                            .withStartupTimeout(Duration.ofMillis(500));
+                            .withStartupTimeout(ofSeconds(3));
             postgreSQLContainer.start();
             return postgreSQLContainer;
         }

@@ -11,7 +11,7 @@ import java.util.Set;
 public class InCondition implements Condition {
 
     private final Property property;
-    private final Set<Object> value;
+    private final Set<?> value;
 
     @Override
     public void accept(ConditionVisitor visitor) {

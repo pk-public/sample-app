@@ -17,4 +17,9 @@ public class AccountService {
     public List<Account> listAccounts() {
         return accountDao.fetchAccounts();
     }
+
+    @Transactional
+    public Account saveAccount(Account account) {
+        return accountDao.saveAccount(account);
+    }
 }

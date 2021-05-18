@@ -1,10 +1,9 @@
 package com.pk.sample.account;
 
-import com.pk.sample.db.tables.records.AccountsRecord;
+import com.pk.sample.db.enums.Currency;
 import com.pk.sample.model.Account;
 import lombok.AllArgsConstructor;
 import org.jooq.DSLContext;
-import org.jooq.InsertResultStep;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,12 +22,18 @@ public class AccountDao {
                 .fetchInto(Account.class);
     }
 
-    public void saveAccount(Account account) {
+    public Account saveAccount(Account account) {
         Long id = dsl.insertInto(ACCOUNTS)
                 .set(ACCOUNTS.NAME, account.getName())
+                .set(ACCOUNTS.CURRENCY, convertCurrency(account.getCurrency()))
                 .returning(ACCOUNTS.ID)
                 .fetchOne().getId();
         account.setId(id);
+        return account;
+    }
+
+    private static Currency convertCurrency(com.pk.sample.model.Currency currency) {
+        return Currency.valueOf(currency.name());
     }
 
 }
