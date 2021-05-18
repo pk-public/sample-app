@@ -21,7 +21,7 @@ public class SimpleTransferCriteriaDto {
     public Long destinationId;
     public String phrase;
 
-    public void construct(TransferCriteria.TransferCriteriaBuilder builder) {
+    public void toTransfer(TransferCriteria.TransferCriteriaBuilder builder) {
         if (nonNull(currency))
             builder.condition(new EqCondition(CURRENCY, currency));
 

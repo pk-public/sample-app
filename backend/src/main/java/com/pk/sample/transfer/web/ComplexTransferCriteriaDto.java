@@ -13,6 +13,7 @@ import static com.pk.sample.model.criteria.Property.*;
 import static com.pk.sample.utils.Consumers.nullableBigDecimal;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.ObjectUtils.anyNotNull;
 import static org.glassfish.jersey.internal.guava.Sets.newHashSet;
 
 @Data
@@ -25,7 +26,7 @@ public class ComplexTransferCriteriaDto {
     public Set<Long> destinationIds = newHashSet();
     public String phrase;
 
-    public void construct(TransferCriteria.TransferCriteriaBuilder builder) {
+    public void toTransfer(TransferCriteria.TransferCriteriaBuilder builder) {
         if (isNotEmpty(sourceIds))
             builder.condition(new InCondition(SOURCE_ID, sourceIds));
 
@@ -38,9 +39,10 @@ public class ComplexTransferCriteriaDto {
         if (nonNull(phrase))
             builder.condition(new LikeCondition(TITLE, phrase));
 
-        builder.condition(new RangeCondition(AMOUNT,
-                nullableBigDecimal(minAmount),
-                nullableBigDecimal(maxAmount)));
+        if (anyNotNull(minAmount, maxAmount))
+            builder.condition(new RangeCondition(AMOUNT,
+                    nullableBigDecimal(minAmount),
+                    nullableBigDecimal(maxAmount)));
     }
 
 }
