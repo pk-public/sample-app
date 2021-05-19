@@ -1,3 +1,5 @@
+Simple App responsible for exposing transfer data via REST API.
+
 This project consists of two main modules:
 
 - backend
@@ -24,7 +26,6 @@ This module contains all buisness related model entities, not dependant on web n
 For this project, PostgreSQL was chosen.
 
 # Configuring dev env
-
 Sample dev env DB config. Properties provided by springs default spring.datasource.* properties
 
 ```shell script
