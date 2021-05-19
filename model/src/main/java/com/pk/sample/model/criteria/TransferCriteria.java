@@ -13,7 +13,7 @@ import java.util.List;
 public class TransferCriteria implements Condition {
 
     @Singular
-    public List<Condition> conditions;
+    private List<Condition> conditions;
 
     public void accept(ConditionVisitor visitor) {
         conditions.forEach(sentence -> {
