@@ -23,7 +23,7 @@ public class RandomEntityTestGenerator {
         return Account.newAccount(RandomStringUtils.randomAlphabetic(7), currency);
     }
 
-    private static Currency randomCurrency() {
+    public static Currency randomCurrency() {
         return Currency.values()[nextInt(0, Currency.values().length)];
     }
 

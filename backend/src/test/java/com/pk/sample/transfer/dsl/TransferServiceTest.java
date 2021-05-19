@@ -8,6 +8,7 @@ import com.pk.sample.model.criteria.Property;
 import com.pk.sample.model.criteria.TransferCriteria;
 import com.pk.sample.model.criteria.sentences.EqCondition;
 import com.pk.sample.transfer.TransferService;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,14 @@ class TransferServiceTest {
 
     private Transfer seperateTransaction;
     private List<Transfer> transactions;
+    private Transfer selfReferTransaction;
 
     @BeforeEach
     void setUp() {
         frstAccount = randomEntityService.createRandomAccount();
         scndAccount = randomEntityService.createRandomAccount();
         seperateTransaction = randomEntityService.createRandomTransaction(frstAccount, scndAccount);
+        selfReferTransaction = randomEntityService.createRandomTransaction(frstAccount, frstAccount);
         transactions = randomEntityService.createRandomTransactions(7, scndAccount, frstAccount);
     }
 
@@ -48,7 +51,7 @@ class TransferServiceTest {
                 .condition(new EqCondition(Property.SOURCE_ID, frstAccount.getId()))
                 .build());
 
-        assertEquals(1, fetched.size());
+        assertEquals(2, fetched.size());
         assertEquals(fetched.get(0), seperateTransaction);
     }
 
@@ -58,18 +61,19 @@ class TransferServiceTest {
                 .condition(new EqCondition(Property.DESTINATION_ID, frstAccount.getId()))
                 .build());
 
-        assertEquals(transactions.size(), fetched.size());
-        assertThat(fetched, containsInAnyOrder(transactions.toArray()));
+        Transfer[] expectedTransactions = ArrayUtils.add(transactions.toArray(Transfer[]::new), selfReferTransaction);
+        assertEquals(expectedTransactions.length, fetched.size());
+        assertThat(fetched, containsInAnyOrder(expectedTransactions));
     }
 
     @Test
-    void shouldConcatanateConditions() {
+    void shouldConjunctConditions() {
         List<Transfer> fetched = transferService.fetch(TransferCriteria.builder()
                 .condition(new EqCondition(Property.DESTINATION_ID, frstAccount.getId()))
                 .condition(new EqCondition(Property.SOURCE_ID, frstAccount.getId()))
                 .build());
 
-        assertEquals(0, fetched.size());
+        assertEquals(1, fetched.size());
     }
 
     @Test

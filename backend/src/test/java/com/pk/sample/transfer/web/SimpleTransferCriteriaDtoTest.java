@@ -1,6 +1,5 @@
 package com.pk.sample.transfer.web;
 
-import com.pk.sample.model.Currency;
 import com.pk.sample.model.criteria.Condition;
 import com.pk.sample.model.criteria.TransferCriteria;
 import com.pk.sample.model.criteria.sentences.EqCondition;
@@ -10,20 +9,22 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.pk.sample.RandomEntityTestGenerator.randomCurrency;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
+import static org.apache.commons.lang3.RandomUtils.nextDouble;
+import static org.apache.commons.lang3.RandomUtils.nextLong;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.isA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SimpleTransferCriteriaDtoTest {
 
     @Test
     void shouldConvertAllCondtions() {
         // given
-        SimpleTransferCriteriaDto dto = new SimpleTransferCriteriaDto(Currency.USD, 1d, 10d, 2L, 4L, "qwer");
+        SimpleTransferCriteriaDto dto = new SimpleTransferCriteriaDto(randomCurrency(), nextDouble(1, 10), nextDouble(10, 20), nextLong(1, 10), nextLong(1, 10), "qwer");
 
         // when
         TransferCriteria.TransferCriteriaBuilder builder = TransferCriteria.builder();
@@ -68,7 +69,6 @@ class SimpleTransferCriteriaDtoTest {
         assertThat(given, isA(RangeCondition.class));
         RangeCondition range = (RangeCondition) given;
         assertEquals(0, ONE.compareTo(range.getMinValue()));
-        assertTrue(TEN.compareTo(range.getMaxValue()) == 0);
-
+        assertEquals(0, TEN.compareTo(range.getMaxValue()));
     }
 }
