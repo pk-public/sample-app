@@ -1,7 +1,7 @@
 package com.pk.sample.transfer.dsl;
 
 import com.pk.sample.DbTest;
-import com.pk.sample.RandomEntityService;
+import com.pk.sample.RandomEntityTestService;
 import com.pk.sample.model.Account;
 import com.pk.sample.model.Transfer;
 import com.pk.sample.model.criteria.Property;
@@ -26,7 +26,7 @@ class TransferServiceTest {
     private TransferService transferService;
 
     @Autowired
-    private RandomEntityService randomEntityService;
+    private RandomEntityTestService randomEntityService;
 
     private Account frstAccount;
     private Account scndAccount;

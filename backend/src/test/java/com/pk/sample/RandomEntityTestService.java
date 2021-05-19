@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.pk.sample.RandomEntityGenerator.generateAccount;
-import static com.pk.sample.RandomEntityGenerator.generateTransfer;
+import static com.pk.sample.RandomEntityTestGenerator.generateAccount;
+import static com.pk.sample.RandomEntityTestGenerator.generateTransfer;
 import static java.util.stream.Collectors.toList;
 
 @Service
 @AllArgsConstructor
-public class RandomEntityService {
+public class RandomEntityTestService {
 
     private final AccountService accountService;
     private final TransferService transferService;
@@ -26,9 +26,8 @@ public class RandomEntityService {
     }
 
     public List<Transfer> createRandomTransactions(int count, Account source, Account destination) {
-        return Stream.generate(() -> generateTransfer(source, destination))
+        return Stream.generate(() -> createRandomTransaction(source, destination))
                 .limit(count)
-                .map(transferService::save)
                 .collect(toList());
     }
 

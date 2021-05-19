@@ -12,7 +12,7 @@ import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.apache.commons.lang3.RandomUtils.nextLong;
 import static org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
-public class RandomEntityGenerator {
+public class RandomEntityTestGenerator {
 
     public static Transfer generateTransfer(Account source, Account destination) {
         return newTransfer(source.getId(), destination.getId(), BigDecimal.valueOf(nextLong(1, 999_999)), source.getCurrency(), randomAlphabetic(7));

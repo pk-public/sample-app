@@ -1,7 +1,7 @@
 package com.pk.sample.transfer;
 
 import com.pk.sample.DbTest;
-import com.pk.sample.RandomEntityService;
+import com.pk.sample.RandomEntityTestService;
 import com.pk.sample.model.Account;
 import com.pk.sample.model.Transfer;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ class TransferControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private RandomEntityService randomEntityService;
+    private RandomEntityTestService randomEntityService;
 
     private Account frstAccount;
     private Account scndAccount;
