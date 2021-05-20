@@ -45,6 +45,8 @@ class TransferCriteriaTest {
 
         // when
         shouldVisit(mockedVisitor);
+
+        // then no exceptions should be thrown
     }
 
 
