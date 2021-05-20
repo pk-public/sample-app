@@ -17,7 +17,51 @@ import static org.mockito.Mockito.*;
 class TransferCriteriaTest {
 
     @Test
-    void shouldVisit(@Mock ConditionVisitor mockedVisitor) {
+    void shouldNotVisitEmptyCondition(@Mock ConditionVisitor mockedVisitor) {
+        // given
+        TransferCriteria criteria = TransferCriteria.builder()
+                .build();
+
+        // when
+        criteria.accept(mockedVisitor);
+
+        // verify
+        verifyNoInteractions(mockedVisitor);
+    }
+
+    @Test
+    void shouldVisitLikeCondition(@Mock ConditionVisitor mockedVisitor) {
+        // given
+        TransferCriteria criteria = TransferCriteria.builder()
+                .condition(new LikeCondition(TITLE, "a"))
+                .build();
+
+        // when
+        criteria.accept(mockedVisitor);
+
+        // verify
+        verify(mockedVisitor).visitLikeSentence(TITLE, "a");
+        verifyNoMoreInteractions(mockedVisitor);
+    }
+
+    @Test
+    void shouldVisitRangeCondition(@Mock ConditionVisitor mockedVisitor) {
+        // given
+        TransferCriteria criteria = TransferCriteria.builder()
+                .condition(new RangeCondition(AMOUNT, ONE, TEN))
+                .build();
+
+        // when
+        criteria.accept(mockedVisitor);
+
+        // verify
+        verify(mockedVisitor).visitGreaterThenSentence(AMOUNT, ONE);
+        verify(mockedVisitor).visitLessThenSentence(AMOUNT, TEN);
+        verifyNoMoreInteractions(mockedVisitor);
+    }
+
+    @Test
+    void shouldVisitManyConditions(@Mock ConditionVisitor mockedVisitor) {
         // given
         TransferCriteria criteria = TransferCriteria.builder()
                 .condition(new LikeCondition(TITLE, "a"))
@@ -44,7 +88,7 @@ class TransferCriteriaTest {
                 .visitEqSentence(any(), any());
 
         // when
-        shouldVisit(mockedVisitor);
+        shouldVisitManyConditions(mockedVisitor);
 
         // then no exceptions should be thrown
     }
